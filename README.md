@@ -6,3 +6,5 @@ Useful Instructions: https://alexpearce.me/2016/02/managing-dotfiles-with-stow/
 https://github.com/tmux-plugins/tpm
 https://github.com/VundleVim/Vundle.vim
 
+For Kitty
+https://github.com/LandingEllipse/kitti3
