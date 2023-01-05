@@ -208,14 +208,15 @@ bar {
 # Autostart
 exec --no-startup-id nm-applet &
 exec --no-startup-id blueman-applet &
-exec --no-startup-id volumeicon
-
+exec --no-startup-id volumeicon &
+exec --no-startup-id nitrogen --restore &
 # Floating
 for_window [class="Nautilus"] floating enable
 for_window [class="Thunar"] floating enable
 for_window [class="Gedit"] floating enable
 for_window [class="Steam"] floating enable
 for_window [title="opencv"] floating enable
-
+for_window [title="Ristretto"] floating enable
+for_window [instance="origin.exe"] floating enable
 exec_always --no-startup-id kitti3 -p top -s 1.0  0.8
 bindsym Control+space nop kitti3
