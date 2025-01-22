@@ -21,6 +21,8 @@ export EDITOR='vim'
 export VISUAL='vim'
 export STEAM_FRAME_FORCE_CLOSE=1
 alias vi='vim'
+export PATH=$PATH:/usr/local/go/bin:/opt/cuda/bin
+export LD_LIBRARY_PATH=/opt/cuda/lib64
 
 alias scan='nmap -sn 192.168.1.\*'
 function powerline_precmd() {
