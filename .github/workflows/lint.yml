@@ -10,7 +10,7 @@ jobs:
     name: zsh syntax check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install zsh
         run: sudo apt-get update && sudo apt-get install -y zsh
       - name: zsh -n (parse only, no execution)
@@ -25,7 +25,7 @@ jobs:
     name: vim / VimL lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install vim + vint
         run: |
           sudo apt-get update && sudo apt-get install -y vim python3-pip
@@ -43,7 +43,7 @@ jobs:
     name: tmux config validation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install tmux
         run: sudo apt-get update && sudo apt-get install -y tmux
       - name: Load config into a throwaway tmux server and check for errors
@@ -63,7 +63,7 @@ jobs:
     name: i3 / i3status config validation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install i3 + i3status
         run: sudo apt-get update && sudo apt-get install -y i3 i3status
       - name: Validate i3 config syntax
@@ -93,7 +93,7 @@ jobs:
     name: GNU Stow dry-run (package layout sanity check)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install stow
         run: sudo apt-get update && sudo apt-get install -y stow
       - name: Dry-run stow every package into a fake $HOME
