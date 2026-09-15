@@ -1,0 +1,108 @@
+name: Lint dotfiles
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  zsh-syntax:
+    name: zsh syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install zsh
+        run: sudo apt-get update && sudo apt-get install -y zsh
+      - name: zsh -n (parse only, no execution)
+        run: |
+          set -e
+          find . -name ".zshrc" -o -name "*.zsh" | while read -r f; do
+            echo "Checking $f"
+            zsh -n "$f"
+          done
+
+  vim-syntax:
+    name: vim / VimL lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install vim + vint
+        run: |
+          sudo apt-get update && sudo apt-get install -y vim python3-pip
+          pip install --user vim-vint
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Run vint (VimL static analysis, errors only)
+        run: |
+          set -e
+          find . -name ".vimrc" -o -name "*.vim" | while read -r f; do
+            echo "Checking $f"
+            vint --error "$f"
+          done
+
+  tmux-syntax:
+    name: tmux config validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tmux
+        run: sudo apt-get update && sudo apt-get install -y tmux
+      - name: Load config into a throwaway tmux server and check for errors
+        run: |
+          set -e
+          find . -name ".tmux.conf" -o -name "tmux.conf" | while read -r f; do
+            echo "Checking $f"
+            output=$(tmux -L citest -f "$f" new-session -d \; kill-server 2>&1 || true)
+            echo "$output"
+            if echo "$output" | grep -Eqi "error|unknown command|usage:|can't find"; then
+              echo "::error file=$f::tmux reported a problem loading this config"
+              exit 1
+            fi
+          done
+
+  i3-syntax:
+    name: i3 / i3status config validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install i3 + i3status
+        run: sudo apt-get update && sudo apt-get install -y i3 i3status
+      - name: Validate i3 config syntax
+        run: |
+          set -e
+          find . -path "*/i3/config" | while read -r f; do
+            echo "Checking $f"
+            i3 -C -c "$f"
+          done
+      - name: Validate i3status config syntax
+        run: |
+          set -e
+          find . -name "i3status.conf" | while read -r f; do
+            echo "Checking $f"
+            # i3status runs forever on success and streams JSON; a bad config
+            # exits immediately with a non-zero status instead.
+            timeout 3 i3status -c "$f" > /dev/null 2>i3status_err.log
+            code=$?
+            if [ "$code" -ne 124 ]; then
+              echo "::error file=$f::i3status exited early (code $code), config is likely invalid"
+              cat i3status_err.log
+              exit 1
+            fi
+          done
+
+  stow-dry-run:
+    name: GNU Stow dry-run (package layout sanity check)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install stow
+        run: sudo apt-get update && sudo apt-get install -y stow
+      - name: Dry-run stow every package into a fake $HOME
+        run: |
+          set -e
+          mkdir -p /tmp/fakehome
+          packages=$(find . -maxdepth 1 -type d -name ".*" ! -name "." ! -name ".git" ! -name ".github" -printf "%f\n")
+          echo "Packages found: $packages"
+          for p in $packages; do
+            echo "Dry-run stowing $p"
+            stow -n -v -d "$PWD" -t /tmp/fakehome "$p"
+          done
