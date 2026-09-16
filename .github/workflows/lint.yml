@@ -80,8 +80,14 @@ jobs:
             echo "Checking $f"
             # i3status runs forever on success and streams JSON; a bad config
             # exits immediately with a non-zero status instead.
-            timeout 3 i3status -c "$f" > /dev/null 2>i3status_err.log
-            code=$?
+            # Note: this must be the condition of an `if` (not a bare command
+            # followed by `code=$?`) so that `set -e` doesn't kill the script
+            # the instant `timeout` returns its expected non-zero code.
+            if timeout 3 i3status -c "$f" > /dev/null 2>i3status_err.log; then
+              code=0
+            else
+              code=$?
+            fi
             if [ "$code" -ne 124 ]; then
               echo "::error file=$f::i3status exited early (code $code), config is likely invalid"
               cat i3status_err.log
