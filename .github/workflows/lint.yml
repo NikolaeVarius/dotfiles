@@ -16,7 +16,7 @@ jobs:
       - name: zsh -n (parse only, no execution)
         run: |
           set -e
-          find . -name ".zshrc" -o -name "*.zsh" | while read -r f; do
+          find . -type f \( -name ".zshrc" -o -name "*.zsh" \) | while read -r f; do
             echo "Checking $f"
             zsh -n "$f"
           done
@@ -34,7 +34,7 @@ jobs:
       - name: Run vint (VimL static analysis, errors only)
         run: |
           set -e
-          find . -name ".vimrc" -o -name "*.vim" | while read -r f; do
+          find . -type f \( -name ".vimrc" -o -name "*.vim" \) | while read -r f; do
             echo "Checking $f"
             vint --error "$f"
           done
