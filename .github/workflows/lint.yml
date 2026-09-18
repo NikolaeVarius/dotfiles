@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install zsh
-        run: sudo apt-get update && sudo apt-get install -y zsh
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y zsh
       - name: zsh -n (parse only, no execution)
         run: |
           set -e
@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Install vim + vint
         run: |
-          sudo apt-get update && sudo apt-get install -y vim python3-pip
+          sudo apt-get update && sudo apt-get install --no-install-recommends -y vim python3-pip
           pip install --user vim-vint
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Run vint (VimL static analysis, errors only)
@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install tmux
-        run: sudo apt-get update && sudo apt-get install -y tmux
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y tmux
       - name: Load config into a throwaway tmux server and check for errors
         run: |
           set -e
@@ -65,7 +65,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install i3 + i3status
-        run: sudo apt-get update && sudo apt-get install -y i3 i3status
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y i3 i3status
       - name: Validate i3 config syntax
         run: |
           set -e
@@ -101,7 +101,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install stow
-        run: sudo apt-get update && sudo apt-get install -y stow
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y stow
       - name: Dry-run stow every package into a fake $HOME
         run: |
           set -e
